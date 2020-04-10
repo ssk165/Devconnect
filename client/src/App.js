@@ -1,47 +1,59 @@
-import React, { Fragment, useEffect } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Landing from "./components/layouts/Landing";
-import Navbar from "./components/layouts/Navbar";
-import Register from "./components/auth/Register";
-import Login from "./components/auth/Login";
-import Alert from "./components/layouts/Alert";
-import Dashboard from "./components/dashboard/Dashboard";
-import PrivateRoute from "./components/routing/PrivateRoute";
+import React, { Fragment, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Navbar from './components/layout/Navbar';
+import Landing from './components/layout/Landing';
+import Routes from './components/routing/Routes';
 
-import "./App.css";
-//Redux
-import { Provider } from "react-redux";
-import store from "./store";
-import { loadUser } from "./actions/auth";
-import setAuthToken from "./utils/setAuthToken";
+// Redux
+import { Provider } from 'react-redux';
+import store from './store';
+import { loadUser } from './actions/auth';
+import setAuthToken from './utils/setAuthToken';
+
+// import your fontawesome library
+import 'font-awesome/css/font-awesome.min.css'
+import './App.css';
+import './darkmode.css';
+
+import styled from "@emotion/styled";
+
+
+const Wrapper = styled("div")`
+  background: ${props => props.theme.background};
+  height: auto;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen";
+  h1, h2, h3, h4, h5, h6, p, td, small {
+    color: ${props => props.theme.body};
+  }
+`;
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
-
 const App = () => {
+
   useEffect(() => {
     store.dispatch(loadUser());
   }, []);
-  //empty brackets above only run useeffects once
+
   return (
     <Provider store={store}>
       <Router>
         <Fragment>
+        <Wrapper>
           <Navbar />
-          <Route exact path="/" component={Landing} />
-          <section className="container">
-            <Alert />
-            <Switch>
-              <Route exact path="/register" component={Register} />
-              <Route exact path="/login" component={Login} />
-              <PrivateRoute exact path="/dashboard" component={Dashboard} />
-            </Switch>
-          </section>
+          <Switch>
+            <Route exact path='/' component={Landing} />
+            <Route component={Routes} />
+          </Switch>
+        </Wrapper>
         </Fragment>
       </Router>
     </Provider>
   );
-};
+}
 
 export default App;
